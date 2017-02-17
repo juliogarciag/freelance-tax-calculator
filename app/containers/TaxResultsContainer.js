@@ -15,6 +15,7 @@ function mapStateToProps(state) {
     itf: results.itf,
     taxableIncome: results.taxableIncome,
     incomeTax: results.incomeTax,
+    realTaxRate: results.realTaxRate,
     balanceWithRetention: results.balanceWithRetention
   };
 }

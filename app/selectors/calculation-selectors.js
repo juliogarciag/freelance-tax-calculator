@@ -21,8 +21,8 @@ function calculateGrossRent(incomes) {
   }, 0));
 }
 
-function calculateFirstDeduction(grossRent) {
-  return Math.round(grossRent * 0.2);
+function calculateFirstDeduction(grossRent, uit) {
+  return Math.round(Math.min(grossRent * 0.2, 24 * uit));
 }
 
 /* eslint-disable no-restricted-syntax */
@@ -34,8 +34,9 @@ function calculateIncomeTax(taxableIncome, rateScales) {
     const incomeInScale = Math.min(deductibleIncome, limit);
     taxes += rate * incomeInScale;
     deductibleIncome -= incomeInScale;
+
     if (deductibleIncome <= 0) {
-      return Math.trunc(taxes);
+      break;
     }
   }
 
@@ -51,7 +52,7 @@ const calculateTaxResults = createSelector(
     const incomes = incomesMap.valueSeq();
     const grossRent = calculateGrossRent(incomes);
     const annualRetention = grossRent * 0.08;
-    const firstDeduction = calculateFirstDeduction(grossRent);
+    const firstDeduction = calculateFirstDeduction(grossRent, uit);
     const fullRent = grossRent - firstDeduction;
     const secondDeduction = 7 * uit;
     const netIncome = Math.max(fullRent - secondDeduction, 0);
@@ -59,7 +60,8 @@ const calculateTaxResults = createSelector(
     const taxableIncome = Math.max(netIncome - itf, 0);
     const rateScales = calculateRateScales(uit);
     const incomeTax = calculateIncomeTax(taxableIncome, rateScales);
-    const balanceWithRetention = incomeTax - annualRetention;
+    const realTaxRate = incomeTax / grossRent;
+    const balanceWithRetention = Math.round(incomeTax - annualRetention);
 
     return {
       grossRent,
@@ -71,6 +73,7 @@ const calculateTaxResults = createSelector(
       itf,
       taxableIncome,
       incomeTax,
+      realTaxRate,
       balanceWithRetention
     };
   }
