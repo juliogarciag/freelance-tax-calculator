@@ -1,16 +1,17 @@
 import { createSelector } from 'reselect';
 import { incomesSelector } from 'selectors/incomes-selectors';
 
-// TODO: Move UIT to an input
-const UIT = 3950;
 const ITF = 2;
-const RATE_SCALES = [
-  { limit: 5 * UIT, rate: 0.08 },
-  { limit: 20 * UIT, rate: 0.14 },
-  { limit: 35 * UIT, rate: 0.17 },
-  { limit: 45 * UIT, rate: 0.2 },
-  { limit: Infinity, rate: 0.3 }
-];
+
+function calculateRateScales(uit) {
+  return [
+    { limit: 5 * uit, rate: 0.08 },
+    { limit: 20 * uit, rate: 0.14 },
+    { limit: 35 * uit, rate: 0.17 },
+    { limit: 45 * uit, rate: 0.2 },
+    { limit: Infinity, rate: 0.3 }
+  ];
+}
 
 function calculateGrossRent(incomes) {
   return Math.trunc(incomes.reduce((total, income) => {
@@ -34,27 +35,31 @@ function calculateIncomeTax(taxableIncome, rateScales) {
     taxes += rate * incomeInScale;
     deductibleIncome -= incomeInScale;
     if (deductibleIncome <= 0) {
-      return taxes;
+      return Math.trunc(taxes);
     }
   }
 
-  return taxes;
+  return Math.trunc(taxes);
 }
 /* eslint-enable no-restricted-syntax */
 
+const uitSelector = (state) => state.getIn(['configuration', 'uit']);
+
 const calculateTaxResults = createSelector(
-  [incomesSelector],
-  (incomesMap) => {
+  [incomesSelector, uitSelector],
+  (incomesMap, uit) => {
     const incomes = incomesMap.valueSeq();
     const grossRent = calculateGrossRent(incomes);
     const annualRetention = grossRent * 0.08;
     const firstDeduction = calculateFirstDeduction(grossRent);
     const fullRent = grossRent - firstDeduction;
-    const secondDeduction = 7 * UIT;
+    const secondDeduction = 7 * uit;
     const netIncome = Math.max(fullRent - secondDeduction, 0);
     const itf = ITF;
     const taxableIncome = Math.max(netIncome - itf, 0);
-    const incomeTax = calculateIncomeTax(taxableIncome, RATE_SCALES);
+    const rateScales = calculateRateScales(uit);
+    const incomeTax = calculateIncomeTax(taxableIncome, rateScales);
+    const balanceWithRetention = incomeTax - annualRetention;
 
     return {
       grossRent,
@@ -65,7 +70,8 @@ const calculateTaxResults = createSelector(
       netIncome,
       itf,
       taxableIncome,
-      incomeTax
+      incomeTax,
+      balanceWithRetention
     };
   }
 );

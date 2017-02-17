@@ -14,7 +14,8 @@ function mapStateToProps(state) {
     netIncome: results.netIncome,
     itf: results.itf,
     taxableIncome: results.taxableIncome,
-    incomeTax: results.incomeTax
+    incomeTax: results.incomeTax,
+    balanceWithRetention: results.balanceWithRetention
   };
 }
 

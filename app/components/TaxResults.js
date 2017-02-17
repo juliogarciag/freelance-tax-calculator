@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 function TaxResults(props) {
   const {
     grossRent, annualRetention, firstDeduction, fullRent, secondDeduction, netIncome, itf,
-    taxableIncome, incomeTax
+    taxableIncome, incomeTax, balanceWithRetention
   } = props;
 
   return (
@@ -17,6 +17,7 @@ function TaxResults(props) {
       <pre>ITF (PEN): {itf}</pre>
       <pre>Renta Imponible (PEN): {taxableIncome}</pre>
       <pre>Impuesto a la Renta (PEN): {incomeTax}</pre>
+      <pre>Balance con Retenciones (PEN): {balanceWithRetention}</pre>
     </div>
   );
 }
@@ -30,7 +31,8 @@ TaxResults.propTypes = {
   netIncome: PropTypes.number.isRequired,
   itf: PropTypes.number.isRequired,
   taxableIncome: PropTypes.number.isRequired,
-  incomeTax: PropTypes.number.isRequired
+  incomeTax: PropTypes.number.isRequired,
+  balanceWithRetention: PropTypes.number.isRequired
 };
 
 export default TaxResults;

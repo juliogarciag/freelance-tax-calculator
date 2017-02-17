@@ -2,8 +2,16 @@ import React, { PropTypes } from 'react';
 import AppPropTypes from 'AppPropTypes';
 import parseNumber from 'lib/parseNumber';
 
+function getExchangedAmount(income) {
+  const amount = income.get('amount');
+  const exchangeRate = income.get('exchangeRate');
+  return (amount === '' || exchangeRate === '') ? '' : (exchangeRate * amount);
+}
+
 function SingleIncomeEditor({ income, updateIncome }) {
   const id = income.get('id');
+  const exchangedAmount = getExchangedAmount(income);
+
   return (
     <div>
       <input
@@ -24,6 +32,12 @@ function SingleIncomeEditor({ income, updateIncome }) {
         value={income.get('exchangeRate')}
         placeholder="exchange rate"
         onChange={(event) => updateIncome(id, 'exchangeRate', parseNumber(event.target.value))}
+      />
+      <input
+        type="number"
+        value={exchangedAmount}
+        readOnly
+        disabled
       />
     </div>
   );

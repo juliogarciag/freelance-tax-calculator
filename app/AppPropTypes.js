@@ -17,4 +17,4 @@ const income = mapContains({
 const mapOfIncomes = mapOf(income.isRequired, string.isRequired);
 const listOfIncomes = listOf(income.isRequired);
 
-export default { income, mapOfIncomes, listOfIncomes };
+export default { income, mapOfIncomes, listOfIncomes, optionalNumber };

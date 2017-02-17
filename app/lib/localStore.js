@@ -1,9 +1,12 @@
 /* global localStorage */
 import identity from 'lodash/identity';
+import debouce from 'lodash/debounce';
 
-function storeInLocalStorage(key, state) {
+const DEBOUNCE_TIME = 1000;
+
+const storeInLocalStorage = debouce((key, state) => {
   localStorage.setItem(key, JSON.stringify(state));
-}
+}, DEBOUNCE_TIME, { maxWait: DEBOUNCE_TIME });
 
 function existsKeyInStorage(key) {
   return !!localStorage.getItem(key);

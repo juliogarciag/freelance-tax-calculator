@@ -9,6 +9,7 @@ function IncomesEditor({ incomes }) {
         <input type="text" defaultValue="Nombre" disabled />
         <input type="text" defaultValue="Monto (USD)" disabled />
         <input type="text" defaultValue="Tasa de Cambio" disabled />
+        <input type="text" defaultValue="Monto (PEN)" disabled />
       </div>
       {
         incomes.map((income) =>
