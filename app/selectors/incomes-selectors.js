@@ -5,7 +5,7 @@ const sortedIncomeIdsSelector = (state) => state.getIn(['incomes', 'sortedIncome
 
 const getSortedIncomes = createSelector(
   [sortedIncomeIdsSelector, incomesSelector],
-  (sortedIncomeIds, incomesMap) =>
+  (sortedIncomeIds = [], incomesMap) =>
     sortedIncomeIds.map((incomeId) => incomesMap.get(incomeId)).toList()
 );
 
