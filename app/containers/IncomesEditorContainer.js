@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import IncomesEditor from 'components/IncomesEditor';
-import { loadEmptyIncomes } from 'actions/incomesActions';
+import { loadEmptyIncomes, updateSortedIncomeIds } from 'actions/incomesActions';
 import AppPropTypes from 'AppPropTypes';
-import { getSortedIncomes } from 'selectors/incomes-selectors';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+import { getSortedIncomes, sortedIncomeIdsSelector } from 'selectors/incomes-selectors';
+import { arrayMove } from 'react-sortable-hoc';
 
 const EMPTY_INCOME_NAMES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
@@ -18,22 +20,37 @@ class IncomesEditorContainer extends Component {
   }
 
   render() {
-    return <IncomesEditor incomes={this.props.incomes} />;
+    const { incomes, sortedIncomeIds, onSortEnd } = this.props;
+    return (
+      <IncomesEditor
+        incomes={incomes}
+        onSortEnd={({ oldIndex, newIndex }) => onSortEnd(sortedIncomeIds, oldIndex, newIndex)}
+      />
+    );
   }
 }
 
 IncomesEditorContainer.propTypes = {
   loadEmptyIncomes: PropTypes.func.isRequired,
-  incomes: AppPropTypes.listOfIncomes.isRequired
+  incomes: AppPropTypes.listOfIncomes.isRequired,
+  sortedIncomeIds: ImmutablePropTypes.listOf(PropTypes.string).isRequired,
+  onSortEnd: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
-  return { incomes: getSortedIncomes(state) };
+  return {
+    incomes: getSortedIncomes(state),
+    sortedIncomeIds: sortedIncomeIdsSelector(state)
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    loadEmptyIncomes: (names) => dispatch(loadEmptyIncomes(names))
+    loadEmptyIncomes: (names) => dispatch(loadEmptyIncomes(names)),
+    onSortEnd: (sortedIncomeIds, oldIndex, newIndex) => {
+      const newOrder = arrayMove(sortedIncomeIds.toArray(), oldIndex, newIndex);
+      dispatch(updateSortedIncomeIds(newOrder));
+    }
   };
 }
 

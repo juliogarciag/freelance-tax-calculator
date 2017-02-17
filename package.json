@@ -52,6 +52,7 @@
     "react-immutable-proptypes": "^2.1.0",
     "react-redux": "^5.0.2",
     "react-router-dom": "next",
+    "react-sortable-hoc": "^0.5.0",
     "redux": "^3.6.0",
     "redux-immutable": "^3.0.11",
     "reselect": "^2.5.4",

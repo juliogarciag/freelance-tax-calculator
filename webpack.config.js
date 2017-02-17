@@ -45,10 +45,10 @@ module.exports = (env = {}) => {
         filename: 'styles.css',
         disable: !isProduction
       }),
-      new CleanWebpackPlugin(['public'], {
-        exclude: ['.keep']
-      }),
       ...(isProduction ? [
+        new CleanWebpackPlugin(['public'], {
+          exclude: ['.keep']
+        }),
         new webpack.optimize.UglifyJsPlugin({
           comments: false,
           sourceMap: false

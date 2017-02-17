@@ -1,5 +1,11 @@
+import { List } from 'immutable';
 import incomesReducer from 'reducers/incomesReducer';
-import { addIncome, updateIncome, deleteIncome, loadEmptyIncomes } from 'actions/incomesActions';
+import {
+  addIncome, updateIncome, deleteIncome, loadEmptyIncomes
+} from 'actions/incomesActions';
+
+const incomeByName = (state, name) =>
+  state.get('incomes').find((income) => income.get('name') === name);
 
 describe('ADD_INCOME', () => {
   let newState;
@@ -19,6 +25,11 @@ describe('ADD_INCOME', () => {
 
   it('adds the one with the position = 1', () => {
     expect(newState.get('incomes').first().get('position')).toEqual(1);
+  });
+
+  it('keeps an array with the sorted income ids with just this element', () => {
+    const newIncome = newState.get('incomes').first();
+    expect(newState.get('sortedIncomeIds').first()).toEqual(newIncome.get('id'));
   });
 });
 
@@ -67,5 +78,16 @@ describe('LOAD_EMPTY_INCOMES', () => {
 
   it('sets the exchangeRate as 1', () => {
     expect(newState.get('incomes').first().get('exchangeRate')).toEqual(1);
+  });
+
+  it('sets the correct positions', () => {
+    const januaryIncome = incomeByName(newState, 'january');
+    const februaryIncome = incomeByName(newState, 'february');
+
+    expect(januaryIncome.get('position')).toEqual(1);
+    expect(februaryIncome.get('position')).toEqual(2);
+    expect(newState.get('sortedIncomeIds')).toEqual(
+      List([januaryIncome.get('id'), februaryIncome.get('id')])
+    );
   });
 });
