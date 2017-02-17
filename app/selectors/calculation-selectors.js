@@ -60,7 +60,7 @@ const calculateTaxResults = createSelector(
     const taxableIncome = Math.max(netIncome - itf, 0);
     const rateScales = calculateRateScales(uit);
     const incomeTax = calculateIncomeTax(taxableIncome, rateScales);
-    const realTaxRate = incomeTax / grossRent;
+    const realTaxRate = grossRent === 0 ? 0 : (incomeTax / grossRent);
     const balanceWithRetention = Math.round(incomeTax - annualRetention);
 
     return {
